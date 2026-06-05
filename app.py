@@ -54,8 +54,7 @@ patterns = [
     r"AFRYCen_AuroDailyDist_\d{4}",
     r"AURORA_low_\d{4}",
     r"AURORA_high_\d{4}",
-    r"Redistributed_real_\d{4}"
-
+    r"Redistributed_real_\d{4}",
     r"AFRYQ126_Central_\d{4}",
     r"AFRYQ126_High_\d{4}",
     r"AFRYQ126_Low_\d{4}"
@@ -76,7 +75,6 @@ for col in df.columns:
     avg_price = pd.to_numeric(df[col], errors='coerce').mean()
     if col.startswith("AFRYQ125"):
         vendor, scenario = "AFRY", "Q125_real"
-        # ✅ ADD THESE
     elif col.startswith("AFRYQ126_Central"):
         vendor, scenario = "AFRY", "Q126_Central"
     elif col.startswith("AFRYQ126_High"):
