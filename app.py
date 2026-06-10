@@ -138,67 +138,201 @@ if view == "Average Price Curve":
 
 # -----------------------------
 # 6. HEATMAP VIEW
+# # -----------------------------
+# elif view == "Heatmap":
+#     st.subheader("🔥 Vendor Heatmaps (Month × Hourly Average)")
+#     show_values = st.sidebar.checkbox("Show Values in Cells", value=False)
+#     heatmap_height = st.sidebar.slider("Heatmap Height (px)", 300, 800, 500, 50)
+#     heatmap_width = st.sidebar.slider("Heatmap Width (px)", 300, 1200, 600, 50)
+#     vendor1 = st.sidebar.selectbox("Select Vendor 1", df_long["Vendor"].unique(), index=0)
+#     scenario1 = st.sidebar.selectbox("Select Scenario 1", df_long[df_long["Vendor"]==vendor1]["Scenario"].unique(), index=0)
+#     vendor2 = st.sidebar.selectbox("Select Vendor 2", df_long["Vendor"].unique(), index=1)
+#     scenario2 = st.sidebar.selectbox("Select Scenario 2", df_long[df_long["Vendor"]==vendor2]["Scenario"].unique(), index=0)
+#     period_options = ["2026-2030","2031-2035","2036-2040","2041-2045","2046-2050","2051-2055","2056-2060"]
+#     period = st.sidebar.selectbox("Select 5-Year Period", period_options)
+#     start_year, end_year = map(int, period.split("-"))
+#     period_cols = df_long[(df_long["Year"]>=start_year) & (df_long["Year"]<=end_year)]
+
+#     def compute_heatmap(vendor_name, scenario_name):
+#         vendor_cols = period_cols[(period_cols["Vendor"]==vendor_name) & (period_cols["Scenario"]==scenario_name)]["Column"].tolist()
+#         if not vendor_cols: return None
+#         df_subset = df[vendor_cols].apply(pd.to_numeric, errors='coerce')
+#         total_hours = df_subset.shape[0]
+#         hours_in_day, month_hours = 24, 30*24
+#         months = [(i // month_hours) % 12 + 1 for i in range(total_hours)]
+#         hours = [i % hours_in_day for i in range(total_hours)]
+#         df_subset["Month"] = months
+#         df_subset["Hour"] = hours
+#         df_melt = df_subset.melt(id_vars=["Month","Hour"], value_vars=vendor_cols, var_name="Column", value_name="Price")
+#         df_grouped = df_melt.groupby(["Month","Hour"])["Price"].mean().reset_index()
+#         return df_grouped.pivot(index="Hour", columns="Month", values="Price")
+
+#     col1, col2 = st.columns(2, gap="medium")
+#     heatmap1 = compute_heatmap(vendor1, scenario1)
+#     heatmap2 = compute_heatmap(vendor2, scenario2)
+
+#     if heatmap1 is not None:
+#         with col1:
+#             st.markdown(f"**{vendor1} - {scenario1}**")
+#             fig1 = px.imshow(heatmap1, labels=dict(x="Month",y="Hour",color="Avg Price"),
+#                              aspect="auto", text_auto=".0f" if show_values else False,
+#                              color_continuous_scale="RdYlBu_r")
+#             fig1.update_layout(height=heatmap_height,width=heatmap_width,margin=dict(l=60,r=60,t=40,b=40))
+#             fig1.update_xaxes(side="bottom", dtick=1)
+#             fig1.update_yaxes(dtick=2)
+#             st.plotly_chart(fig1, use_container_width=False)
+#     else:
+#         with col1:
+#             st.warning(f"No data for {vendor1} - {scenario1} in selected period")
+
+#     if heatmap2 is not None:
+#         with col2:
+#             st.markdown(f"**{vendor2} - {scenario2}**")
+#             fig2 = px.imshow(heatmap2, labels=dict(x="Month",y="Hour",color="Avg Price"),
+#                              aspect="auto", text_auto=".0f" if show_values else False,
+#                              color_continuous_scale="RdYlBu_r")
+#             fig2.update_layout(height=heatmap_height,width=heatmap_width,margin=dict(l=60,r=60,t=40,b=40))
+#             fig2.update_xaxes(side="bottom", dtick=1)
+#             fig2.update_yaxes(dtick=2)
+#             st.plotly_chart(fig2, use_container_width=False)
+#     else:
+#         with col2:
+#             st.warning(f"No data for {vendor2} - {scenario2} in selected period")
+
+# --------------------------------------------------------------------
+# -----------------------------
+# 6. HEATMAP VIEW
 # -----------------------------
 elif view == "Heatmap":
     st.subheader("🔥 Vendor Heatmaps (Month × Hourly Average)")
+
     show_values = st.sidebar.checkbox("Show Values in Cells", value=False)
     heatmap_height = st.sidebar.slider("Heatmap Height (px)", 300, 800, 500, 50)
     heatmap_width = st.sidebar.slider("Heatmap Width (px)", 300, 1200, 600, 50)
+
     vendor1 = st.sidebar.selectbox("Select Vendor 1", df_long["Vendor"].unique(), index=0)
-    scenario1 = st.sidebar.selectbox("Select Scenario 1", df_long[df_long["Vendor"]==vendor1]["Scenario"].unique(), index=0)
+    scenario1 = st.sidebar.selectbox("Select Scenario 1", df_long[df_long["Vendor"] == vendor1]["Scenario"].unique(), index=0)
+
     vendor2 = st.sidebar.selectbox("Select Vendor 2", df_long["Vendor"].unique(), index=1)
-    scenario2 = st.sidebar.selectbox("Select Scenario 2", df_long[df_long["Vendor"]==vendor2]["Scenario"].unique(), index=0)
+    scenario2 = st.sidebar.selectbox("Select Scenario 2", df_long[df_long["Vendor"] == vendor2]["Scenario"].unique(), index=0)
+
     period_options = ["2026-2030","2031-2035","2036-2040","2041-2045","2046-2050","2051-2055","2056-2060"]
     period = st.sidebar.selectbox("Select 5-Year Period", period_options)
+
     start_year, end_year = map(int, period.split("-"))
-    period_cols = df_long[(df_long["Year"]>=start_year) & (df_long["Year"]<=end_year)]
+    period_cols = df_long[(df_long["Year"] >= start_year) & (df_long["Year"] <= end_year)]
 
     def compute_heatmap(vendor_name, scenario_name):
-        vendor_cols = period_cols[(period_cols["Vendor"]==vendor_name) & (period_cols["Scenario"]==scenario_name)]["Column"].tolist()
-        if not vendor_cols: return None
+        vendor_cols = period_cols[
+            (period_cols["Vendor"] == vendor_name) &
+            (period_cols["Scenario"] == scenario_name)
+        ]["Column"].tolist()
+
+        if not vendor_cols:
+            return None
+
         df_subset = df[vendor_cols].apply(pd.to_numeric, errors='coerce')
+
         total_hours = df_subset.shape[0]
-        hours_in_day, month_hours = 24, 30*24
+        hours_in_day, month_hours = 24, 30 * 24
+
         months = [(i // month_hours) % 12 + 1 for i in range(total_hours)]
         hours = [i % hours_in_day for i in range(total_hours)]
+
         df_subset["Month"] = months
         df_subset["Hour"] = hours
-        df_melt = df_subset.melt(id_vars=["Month","Hour"], value_vars=vendor_cols, var_name="Column", value_name="Price")
-        df_grouped = df_melt.groupby(["Month","Hour"])["Price"].mean().reset_index()
+
+        df_melt = df_subset.melt(
+            id_vars=["Month", "Hour"],
+            value_vars=vendor_cols,
+            var_name="Column",
+            value_name="Price"
+        )
+
+        df_grouped = df_melt.groupby(["Month", "Hour"])["Price"].mean().reset_index()
+
         return df_grouped.pivot(index="Hour", columns="Month", values="Price")
 
     col1, col2 = st.columns(2, gap="medium")
+
     heatmap1 = compute_heatmap(vendor1, scenario1)
     heatmap2 = compute_heatmap(vendor2, scenario2)
 
+    # -----------------------------
+    # 🔥 GLOBAL COLOR SCALE FIX
+    # -----------------------------
+    if heatmap1 is not None and heatmap2 is not None:
+        all_values = pd.concat([
+            heatmap1.stack(),
+            heatmap2.stack()
+        ]).dropna()
+
+        vmin = all_values.min()
+        vmax = all_values.max()
+    else:
+        vmin, vmax = None, None
+
+    # -----------------------------
+    # HEATMAP 1
+    # -----------------------------
     if heatmap1 is not None:
         with col1:
             st.markdown(f"**{vendor1} - {scenario1}**")
-            fig1 = px.imshow(heatmap1, labels=dict(x="Month",y="Hour",color="Avg Price"),
-                             aspect="auto", text_auto=".0f" if show_values else False,
-                             color_continuous_scale="RdYlBu_r")
-            fig1.update_layout(height=heatmap_height,width=heatmap_width,margin=dict(l=60,r=60,t=40,b=40))
+
+            fig1 = px.imshow(
+                heatmap1,
+                labels=dict(x="Month", y="Hour", color="Avg Price"),
+                aspect="auto",
+                text_auto=".0f" if show_values else False,
+                color_continuous_scale="RdYlBu_r",
+                zmin=vmin,
+                zmax=vmax
+            )
+
+            fig1.update_layout(
+                height=heatmap_height,
+                width=heatmap_width,
+                margin=dict(l=60, r=60, t=40, b=40)
+            )
+
             fig1.update_xaxes(side="bottom", dtick=1)
             fig1.update_yaxes(dtick=2)
+
             st.plotly_chart(fig1, use_container_width=False)
     else:
         with col1:
             st.warning(f"No data for {vendor1} - {scenario1} in selected period")
 
+    # -----------------------------
+    # HEATMAP 2
+    # -----------------------------
     if heatmap2 is not None:
         with col2:
             st.markdown(f"**{vendor2} - {scenario2}**")
-            fig2 = px.imshow(heatmap2, labels=dict(x="Month",y="Hour",color="Avg Price"),
-                             aspect="auto", text_auto=".0f" if show_values else False,
-                             color_continuous_scale="RdYlBu_r")
-            fig2.update_layout(height=heatmap_height,width=heatmap_width,margin=dict(l=60,r=60,t=40,b=40))
+
+            fig2 = px.imshow(
+                heatmap2,
+                labels=dict(x="Month", y="Hour", color="Avg Price"),
+                aspect="auto",
+                text_auto=".0f" if show_values else False,
+                color_continuous_scale="RdYlBu_r",
+                zmin=vmin,
+                zmax=vmax
+            )
+
+            fig2.update_layout(
+                height=heatmap_height,
+                width=heatmap_width,
+                margin=dict(l=60, r=60, t=40, b=40)
+            )
+
             fig2.update_xaxes(side="bottom", dtick=1)
             fig2.update_yaxes(dtick=2)
+
             st.plotly_chart(fig2, use_container_width=False)
     else:
         with col2:
             st.warning(f"No data for {vendor2} - {scenario2} in selected period")
-
 # -----------------------------
 # 7. HOURLY AVERAGE PRICE WITH 5-YEAR AGGREGATE
 # -----------------------------
