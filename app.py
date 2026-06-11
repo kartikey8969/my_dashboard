@@ -140,7 +140,7 @@ if view == "Average Price Curve":
 # 6. HEATMAP VIEW
 # # -----------------------------
 # elif view == "Heatmap":
-#     st.subheader("🔥 Vendor Heatmaps (Month × Hourly Average)")
+#     st.subheader("Vendor Heatmaps (Month × Hourly Average)")
 #     show_values = st.sidebar.checkbox("Show Values in Cells", value=False)
 #     heatmap_height = st.sidebar.slider("Heatmap Height (px)", 300, 800, 500, 50)
 #     heatmap_width = st.sidebar.slider("Heatmap Width (px)", 300, 1200, 600, 50)
@@ -204,7 +204,7 @@ if view == "Average Price Curve":
 # 6. HEATMAP VIEW
 # -----------------------------
 elif view == "Heatmap":
-    st.subheader("🔥 Vendor Heatmaps (Month × Hourly Average)")
+    st.subheader("Vendor Heatmaps (Month × Hourly Average)")
 
     show_values = st.sidebar.checkbox("Show Values in Cells", value=False)
     heatmap_height = st.sidebar.slider("Heatmap Height (px)", 300, 800, 500, 50)
@@ -216,11 +216,15 @@ elif view == "Heatmap":
     vendor2 = st.sidebar.selectbox("Select Vendor 2", df_long["Vendor"].unique(), index=1)
     scenario2 = st.sidebar.selectbox("Select Scenario 2", df_long[df_long["Vendor"] == vendor2]["Scenario"].unique(), index=0)
 
-    period_options = ["2026-2030","2031-2035","2036-2040","2041-2045","2046-2050","2051-2055","2056-2060"]
-    period = st.sidebar.selectbox("Select 5-Year Period", period_options)
+    # period_options = ["2026-2030","2031-2035","2036-2040","2041-2045","2046-2050","2051-2055","2056-2060"]
+    # period = st.sidebar.selectbox("Select 5-Year Period", period_options)
 
-    start_year, end_year = map(int, period.split("-"))
-    period_cols = df_long[(df_long["Year"] >= start_year) & (df_long["Year"] <= end_year)]
+    # start_year, end_year = map(int, period.split("-"))
+    # period_cols = df_long[(df_long["Year"] >= start_year) & (df_long["Year"] <= end_year)]
+    year_options = sorted(df_long["Year"].unique())
+    selected_year = st.sidebar.selectbox("Select Year", year_options)
+
+    period_cols = df_long[df_long["Year"] == selected_year]
 
     def compute_heatmap(vendor_name, scenario_name):
         vendor_cols = period_cols[
